@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FinLite — SIP & Inflation Calculator</title>
+    <meta name="description" content="A clean finance mini-site: SIP calculator, inflation-adjusted value, and a simple returns chart. Hosted on GitHub Pages." />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap topbar__inner">
+        <a class="brand" href="#">
+          <span class="brand__dot"></span>
+          <span class="brand__name">FinLite</span>
+          <span class="brand__tag">SIP · Inflation · Goals</span>
+        </a>
+
+        <div class="topbar__actions">
+          <button id="themeBtn" class="btn btn--ghost" type="button" aria-label="Toggle theme">
+            <span class="icon" aria-hidden="true">☾</span>
+            <span class="btn__text">Theme</span>
+          </button>
+          <a class="btn" href="#calculator">Try Calculator</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="hero">
+        <div class="hero__left">
+          <div class="pill">Finance mini-site • GitHub Pages ready</div>
+          <h1>Plan your wealth like a pro — in a simple page.</h1>
+          <p class="sub">
+            SIP future value + inflation-adjusted “real value” + a clean chart.
+            Built as a static website so you can host it instantly on GitHub Pages.
+          </p>
+          <div class="hero__cta">
+            <a class="btn" href="#calculator">Calculate SIP</a>
+            <a class="btn btn--ghost" href="#steps">Hosting Steps</a>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="stat__k" id="statFV">—</div>
+              <div class="stat__l">Future Value</div>
+            </div>
+            <div class="stat">
+              <div class="stat__k" id="statInvested">—</div>
+              <div class="stat__l">Total Invested</div>
+            </div>
+            <div class="stat">
+              <div class="stat__k" id="statGain">—</div>
+              <div class="stat__l">Estimated Gain</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero__right">
+          <div class="card card--glow">
+            <div class="card__head">
+              <div>
+                <div class="card__title">Quick Goal Check</div>
+                <div class="card__muted">What will your SIP become?</div>
+              </div>
+              <span class="badge">No login • No backend</span>
+            </div>
+
+            <div class="grid2">
+              <label class="field">
+                <span>Monthly SIP (₹)</span>
+                <input id="sip" type="number" inputmode="numeric" min="0" value="10000" />
+              </label>
+
+              <label class="field">
+                <span>Years</span>
+                <input id="years" type="number" inputmode="numeric" min="1" value="10" />
+              </label>
+
+              <label class="field">
+                <span>Expected return (% p.a.)</span>
+                <input id="rate" type="number" inputmode="decimal" min="0" step="0.1" value="12" />
+              </label>
+
+              <label class="field">
+                <span>Inflation (% p.a.)</span>
+                <input id="inflation" type="number" inputmode="decimal" min="0" step="0.1" value="6" />
+              </label>
+            </div>
+
+            <div class="toggles">
+              <label class="toggle">
+                <input id="useInflation" type="checkbox" checked />
+                <span>Show inflation-adjusted value</span>
+              </label>
+              <label class="toggle">
+                <input id="showInvested" type="checkbox" checked />
+                <span>Show invested line</span>
+              </label>
+            </div>
+
+            <button id="calcBtn" class="btn btn--full" type="button">Recalculate</button>
+
+            <div class="results">
+              <div class="result">
+                <div class="result__label">Future Value</div>
+                <div class="result__value" id="fv">—</div>
+                <div class="result__hint" id="fvHint">—</div>
+              </div>
+              <div class="result">
+                <div class="result__label">Total Invested</div>
+                <div class="result__value" id="invested">—</div>
+                <div class="result__hint">SIP × months</div>
+              </div>
+              <div class="result">
+                <div class="result__label">Estimated Gain</div>
+                <div class="result__value" id="gain">—</div>
+                <div class="result__hint">FV − Invested</div>
+              </div>
+            </div>
+
+            <div class="chartWrap">
+              <div class="chartHead">
+                <div class="chartTitle">Growth over time</div>
+                <div class="chartMeta" id="chartMeta">—</div>
+              </div>
+              <svg id="chart" viewBox="0 0 720 260" role="img" aria-label="SIP growth chart"></svg>
+              <div class="chartLegend">
+                <span class="legendDot legendDot--a"></span> Future value
+                <span class="spacer"></span>
+                <span class="legendDot legendDot--b"></span> Total invested
+              </div>
+            </div>
+
+            <div class="footnote">
+              Numbers are estimates. Returns are not guaranteed. Use for learning/testing hosting.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="calculator" class="section">
+        <h2>How it calculates SIP</h2>
+        <div class="cards3">
+          <div class="card">
+            <div class="card__title">Monthly compounding</div>
+            <p class="card__muted">
+              Uses monthly rate = (annual rate / 12). Each SIP installment compounds for the remaining months.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card__title">Future Value formula</div>
+            <p class="card__muted">
+              FV ≈ P × [((1+r)^n − 1)/r] × (1+r) where P = monthly SIP, r = monthly return, n = months.
+            </p>
+          </div>
+          <div class="card">
+            <div class="card__title">Inflation adjustment</div>
+            <p class="card__muted">
+              “Real value” = FV / (1 + inflation)^years to show today’s purchasing power.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="steps" class="section">
+        <h2>Host it on GitHub Pages (exact steps)</h2>
+        <ol class="steps">
+          <li><b>Create a new repository</b> on GitHub (example name: <code>finlite</code>).</li>
+          <li><b>Add 3 files</b> to the repo root:
+            <code>index.html</code>, <code>styles.css</code>, <code>app.js</code>.
+          </li>
+          <li><b>Commit</b> the files (via GitHub UI or git).</li>
+          <li>Go to <b>Settings → Pages</b>.</li>
+          <li>Under <b>Build and deployment</b>:
+            <ul>
+              <li><b>Source:</b> Deploy from a branch</li>
+              <li><b>Branch:</b> <code>main</code> / <code>root</code></li>
+            </ul>
+          </li>
+          <li>Save. GitHub will give you a URL like:
+            <code>https://YOUR-USERNAME.github.io/finlite/</code></li>
+        </ol>
+
+        <div class="hint">
+          Tip: For a personal homepage, name the repo <code>YOUR-USERNAME.github.io</code>.
+          Then your site becomes <code>https://YOUR-USERNAME.github.io</code>.
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div>Built for GitHub Pages • FinLite</div>
+        <div class="footer__right">
+          <a href="#calculator">Calculator</a>
+          <span>·</span>
+          <a href="#steps">Hosting Steps</a>
+        </div>
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
