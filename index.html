@@ -1,203 +1,356 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FinLite — SIP & Inflation Calculator</title>
-    <meta name="description" content="A clean finance mini-site: SIP calculator, inflation-adjusted value, and a simple returns chart. Hosted on GitHub Pages." />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="topbar">
-      <div class="wrap topbar__inner">
-        <a class="brand" href="#">
-          <span class="brand__dot"></span>
-          <span class="brand__name">FinLite</span>
-          <span class="brand__tag">SIP · Inflation · Goals</span>
-        </a>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="FinBoard: SIP, Lumpsum, Goal planning, inflation adjustment, and Monte Carlo range — a clean finance dashboard hosted on GitHub Pages."/>
+  <title>FinBoard — Smart SIP & Goals</title>
 
-        <div class="topbar__actions">
-          <button id="themeBtn" class="btn btn--ghost" type="button" aria-label="Toggle theme">
-            <span class="icon" aria-hidden="true">☾</span>
-            <span class="btn__text">Theme</span>
-          </button>
-          <a class="btn" href="#calculator">Try Calculator</a>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./styles.css" />
+  <script defer src="./app.js"></script>
+</head>
+
+<body>
+  <div class="bgFx" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="wrap topbar__inner">
+      <a class="brand" href="#">
+        <span class="brand__logo" aria-hidden="true">
+          <span class="orb"></span>
+          <span class="ring"></span>
+        </span>
+        <span class="brand__text">
+          <span class="brand__name">FinBoard</span>
+          <span class="brand__tag">SIP • Goal • Inflation • Range</span>
+        </span>
+      </a>
+
+      <div class="topbar__right">
+        <button class="chip" id="demoFill" type="button" title="Fill demo values">
+          Demo
+        </button>
+
+        <button class="chip" id="resetAll" type="button" title="Reset">
+          Reset
+        </button>
+
+        <button class="chip chip--icon" id="themeBtn" type="button" aria-label="Toggle theme">
+          <span id="themeIcon">☾</span>
+        </button>
+
+        <a class="btn" href="#planner">Open Planner</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap page">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero__left">
+        <div class="pill">
+          <span class="pill__dot"></span>
+          Production-style static finance dashboard (GitHub Pages)
+        </div>
+
+        <h1>
+          See your SIP growth, <span class="grad">real purchasing power</span>,
+          and a realistic range — in one clean dashboard.
+        </h1>
+
+        <p class="sub">
+          This site runs fully in the browser. No backend. Fast, smooth, and perfect for GitHub Pages testing.
+          Change any input — charts & values update instantly.
+        </p>
+
+        <div class="hero__cta">
+          <button class="btn btn--soft" id="scrollCalc" type="button">Try Calculators</button>
+          <a class="btn btn--ghost" href="#how">How it works</a>
+        </div>
+
+        <div class="kpis" id="kpis">
+          <div class="kpi">
+            <div class="kpi__label">Future Value</div>
+            <div class="kpi__value" id="kpiFV">—</div>
+            <div class="kpi__hint" id="kpiFVHint">—</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__label">Total Invested</div>
+            <div class="kpi__value" id="kpiInvested">—</div>
+            <div class="kpi__hint">Monthly × Months</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi__label">Estimated Gain</div>
+            <div class="kpi__value" id="kpiGain">—</div>
+            <div class="kpi__hint">FV − Invested</div>
+          </div>
         </div>
       </div>
-    </header>
 
-    <main class="wrap">
-      <section class="hero">
-        <div class="hero__left">
-          <div class="pill">Finance mini-site • GitHub Pages ready</div>
-          <h1>Plan your wealth like a pro — in a simple page.</h1>
-          <p class="sub">
-            SIP future value + inflation-adjusted “real value” + a clean chart.
-            Built as a static website so you can host it instantly on GitHub Pages.
-          </p>
-          <div class="hero__cta">
-            <a class="btn" href="#calculator">Calculate SIP</a>
-            <a class="btn btn--ghost" href="#steps">Hosting Steps</a>
+      <div class="hero__right">
+        <div class="panel panel--glow" id="calc">
+          <div class="panel__head">
+            <div>
+              <div class="panel__title">Core Inputs</div>
+              <div class="panel__sub">Instant live updates • Clean defaults • No backend</div>
+            </div>
+            <div class="badge">LIVE</div>
           </div>
 
-          <div class="stats">
-            <div class="stat">
-              <div class="stat__k" id="statFV">—</div>
-              <div class="stat__l">Future Value</div>
-            </div>
-            <div class="stat">
-              <div class="stat__k" id="statInvested">—</div>
-              <div class="stat__l">Total Invested</div>
-            </div>
-            <div class="stat">
-              <div class="stat__k" id="statGain">—</div>
-              <div class="stat__l">Estimated Gain</div>
-            </div>
+          <div class="tabs" role="tablist" aria-label="Calculator tabs">
+            <button class="tab is-active" data-tab="sip" role="tab" aria-selected="true">SIP</button>
+            <button class="tab" data-tab="lump" role="tab" aria-selected="false">Lumpsum</button>
+            <button class="tab" data-tab="goal" role="tab" aria-selected="false">Goal</button>
           </div>
-        </div>
 
-        <div class="hero__right">
-          <div class="card card--glow">
-            <div class="card__head">
-              <div>
-                <div class="card__title">Quick Goal Check</div>
-                <div class="card__muted">What will your SIP become?</div>
-              </div>
-              <span class="badge">No login • No backend</span>
-            </div>
-
+          <!-- SIP -->
+          <div class="tabPanel is-active" data-panel="sip" role="tabpanel">
             <div class="grid2">
               <label class="field">
                 <span>Monthly SIP (₹)</span>
-                <input id="sip" type="number" inputmode="numeric" min="0" value="10000" />
+                <input id="sipAmt" type="number" min="0" step="100" value="10000" />
               </label>
 
               <label class="field">
                 <span>Years</span>
-                <input id="years" type="number" inputmode="numeric" min="1" value="10" />
+                <input id="years" type="number" min="1" step="1" value="10" />
               </label>
 
               <label class="field">
-                <span>Expected return (% p.a.)</span>
-                <input id="rate" type="number" inputmode="decimal" min="0" step="0.1" value="12" />
+                <span>Expected Return (% p.a.)</span>
+                <input id="rate" type="number" min="0" step="0.1" value="12" />
               </label>
 
               <label class="field">
                 <span>Inflation (% p.a.)</span>
-                <input id="inflation" type="number" inputmode="decimal" min="0" step="0.1" value="6" />
+                <input id="infl" type="number" min="0" step="0.1" value="6" />
               </label>
             </div>
 
-            <div class="toggles">
+            <div class="row">
               <label class="toggle">
-                <input id="useInflation" type="checkbox" checked />
-                <span>Show inflation-adjusted value</span>
+                <input id="realToggle" type="checkbox" checked />
+                <span>Show inflation-adjusted value (real ₹)</span>
               </label>
+
               <label class="toggle">
-                <input id="showInvested" type="checkbox" checked />
-                <span>Show invested line</span>
+                <input id="mcToggle" type="checkbox" checked />
+                <span>Show “range” (Monte Carlo)</span>
               </label>
             </div>
 
-            <button id="calcBtn" class="btn btn--full" type="button">Recalculate</button>
+            <div class="hintBox">
+              <div class="hintBox__title">Tip</div>
+              <div class="hintBox__text">
+                Real value helps you understand purchasing power. Example: ₹1 Cr in 10 years may “feel” like less today.
+              </div>
+            </div>
+          </div>
 
-            <div class="results">
-              <div class="result">
-                <div class="result__label">Future Value</div>
-                <div class="result__value" id="fv">—</div>
-                <div class="result__hint" id="fvHint">—</div>
+          <!-- LUMPSUM -->
+          <div class="tabPanel" data-panel="lump" role="tabpanel">
+            <div class="grid2">
+              <label class="field">
+                <span>Lumpsum Amount (₹)</span>
+                <input id="lumpAmt" type="number" min="0" step="1000" value="500000" />
+              </label>
+
+              <label class="field">
+                <span>Years</span>
+                <input id="lumpYears" type="number" min="1" step="1" value="10" />
+              </label>
+
+              <label class="field">
+                <span>Expected Return (% p.a.)</span>
+                <input id="lumpRate" type="number" min="0" step="0.1" value="11" />
+              </label>
+
+              <label class="field">
+                <span>Inflation (% p.a.)</span>
+                <input id="lumpInfl" type="number" min="0" step="0.1" value="6" />
+              </label>
+            </div>
+
+            <div class="row">
+              <label class="toggle">
+                <input id="lumpRealToggle" type="checkbox" checked />
+                <span>Show inflation-adjusted value (real ₹)</span>
+              </label>
+            </div>
+
+            <div class="hintBox">
+              <div class="hintBox__title">Note</div>
+              <div class="hintBox__text">
+                Lumpsum uses annual compounding for simplicity. SIP uses monthly contributions with monthly compounding.
               </div>
-              <div class="result">
-                <div class="result__label">Total Invested</div>
-                <div class="result__value" id="invested">—</div>
-                <div class="result__hint">SIP × months</div>
-              </div>
-              <div class="result">
-                <div class="result__label">Estimated Gain</div>
-                <div class="result__value" id="gain">—</div>
-                <div class="result__hint">FV − Invested</div>
+            </div>
+          </div>
+
+          <!-- GOAL -->
+          <div class="tabPanel" data-panel="goal" role="tabpanel">
+            <div class="grid2">
+              <label class="field">
+                <span>Goal Amount (₹)</span>
+                <input id="goalAmt" type="number" min="0" step="10000" value="10000000" />
+              </label>
+
+              <label class="field">
+                <span>Years to Goal</span>
+                <input id="goalYears" type="number" min="1" step="1" value="8" />
+              </label>
+
+              <label class="field">
+                <span>Expected Return (% p.a.)</span>
+                <input id="goalRate" type="number" min="0" step="0.1" value="12" />
+              </label>
+
+              <label class="field">
+                <span>Inflation (% p.a.)</span>
+                <input id="goalInfl" type="number" min="0" step="0.1" value="6" />
+              </label>
+            </div>
+
+            <div class="row">
+              <label class="toggle">
+                <input id="goalInflateGoal" type="checkbox" checked />
+                <span>Inflate the goal amount into future value</span>
+              </label>
+            </div>
+
+            <div class="hintBox">
+              <div class="hintBox__title">Goal Planner</div>
+              <div class="hintBox__text">
+                We calculate the SIP needed to reach the goal. Toggle “inflate goal” to account for future cost.
               </div>
             </div>
 
-            <div class="chartWrap">
-              <div class="chartHead">
-                <div class="chartTitle">Growth over time</div>
-                <div class="chartMeta" id="chartMeta">—</div>
-              </div>
-              <svg id="chart" viewBox="0 0 720 260" role="img" aria-label="SIP growth chart"></svg>
-              <div class="chartLegend">
-                <span class="legendDot legendDot--a"></span> Future value
-                <span class="spacer"></span>
-                <span class="legendDot legendDot--b"></span> Total invested
-              </div>
-            </div>
+            <div class="bigAnswer" id="goalAnswer">—</div>
+          </div>
 
-            <div class="footnote">
-              Numbers are estimates. Returns are not guaranteed. Use for learning/testing hosting.
-            </div>
+          <div class="panel__footer">
+            <button class="btn btn--full" id="recalcBtn" type="button">Recalculate</button>
+            <div class="miniNote" id="statusNote">Ready.</div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section id="calculator" class="section">
-        <h2>How it calculates SIP</h2>
-        <div class="cards3">
-          <div class="card">
-            <div class="card__title">Monthly compounding</div>
-            <p class="card__muted">
-              Uses monthly rate = (annual rate / 12). Each SIP installment compounds for the remaining months.
-            </p>
+    <!-- CHARTS + BREAKDOWN -->
+    <section class="gridMain" id="planner">
+      <div class="card">
+        <div class="card__head">
+          <div>
+            <div class="card__title">Growth Chart</div>
+            <div class="card__sub" id="chartMeta">—</div>
           </div>
-          <div class="card">
-            <div class="card__title">Future Value formula</div>
-            <p class="card__muted">
-              FV ≈ P × [((1+r)^n − 1)/r] × (1+r) where P = monthly SIP, r = monthly return, n = months.
-            </p>
-          </div>
-          <div class="card">
-            <div class="card__title">Inflation adjustment</div>
-            <p class="card__muted">
-              “Real value” = FV / (1 + inflation)^years to show today’s purchasing power.
-            </p>
+          <div class="chips">
+            <span class="chip chip--tiny" id="modeChip">Mode: SIP</span>
+            <span class="chip chip--tiny" id="realChip">Real: ON</span>
           </div>
         </div>
-      </section>
 
-      <section id="steps" class="section">
-        <h2>Host it on GitHub Pages (exact steps)</h2>
-        <ol class="steps">
-          <li><b>Create a new repository</b> on GitHub (example name: <code>finlite</code>).</li>
-          <li><b>Add 3 files</b> to the repo root:
-            <code>index.html</code>, <code>styles.css</code>, <code>app.js</code>.
-          </li>
-          <li><b>Commit</b> the files (via GitHub UI or git).</li>
-          <li>Go to <b>Settings → Pages</b>.</li>
-          <li>Under <b>Build and deployment</b>:
-            <ul>
-              <li><b>Source:</b> Deploy from a branch</li>
-              <li><b>Branch:</b> <code>main</code> / <code>root</code></li>
-            </ul>
-          </li>
-          <li>Save. GitHub will give you a URL like:
-            <code>https://YOUR-USERNAME.github.io/finlite/</code></li>
-        </ol>
-
-        <div class="hint">
-          Tip: For a personal homepage, name the repo <code>YOUR-USERNAME.github.io</code>.
-          Then your site becomes <code>https://YOUR-USERNAME.github.io</code>.
+        <div class="canvasWrap">
+          <canvas id="chart" width="980" height="360"></canvas>
         </div>
-      </section>
 
-      <footer class="footer">
-        <div>Built for GitHub Pages • FinLite</div>
-        <div class="footer__right">
-          <a href="#calculator">Calculator</a>
-          <span>·</span>
-          <a href="#steps">Hosting Steps</a>
+        <div class="legend">
+          <span class="legend__item"><i class="dot dot--a"></i> Value</span>
+          <span class="legend__item"><i class="dot dot--b"></i> Invested</span>
+          <span class="legend__item"><i class="dot dot--c"></i> Range (P10–P90)</span>
         </div>
-      </footer>
-    </main>
+      </div>
 
-    <script src="app.js"></script>
-  </body>
+      <div class="card">
+        <div class="card__head">
+          <div>
+            <div class="card__title">Breakdown</div>
+            <div class="card__sub">Clear numbers + real value + range</div>
+          </div>
+          <button class="chip chip--tiny" id="copySummary" type="button">Copy Summary</button>
+        </div>
+
+        <div class="grid3">
+          <div class="metric">
+            <div class="metric__label">Nominal Value</div>
+            <div class="metric__value" id="nominalVal">—</div>
+            <div class="metric__hint">Future value without inflation adjustment</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Real Value</div>
+            <div class="metric__value" id="realVal">—</div>
+            <div class="metric__hint">Purchasing power in today’s ₹</div>
+          </div>
+          <div class="metric">
+            <div class="metric__label">Range (P10–P90)</div>
+            <div class="metric__value" id="rangeVal">—</div>
+            <div class="metric__hint">Monte Carlo outcome band (rough)</div>
+          </div>
+        </div>
+
+        <div class="tableWrap">
+          <table class="table" aria-label="Yearly breakdown">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Invested</th>
+                <th>Value</th>
+                <th>Real Value</th>
+              </tr>
+            </thead>
+            <tbody id="breakdownBody">
+              <tr><td colspan="4" class="tdMuted">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="disclaimer">
+          <b>Disclaimer:</b> This is an educational estimator. Returns are not guaranteed. Range is a simplified simulation.
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section class="how" id="how">
+      <div class="how__card">
+        <h2>How it works</h2>
+        <div class="how__grid">
+          <div class="how__item">
+            <div class="how__k">SIP math</div>
+            <div class="how__v">Monthly contribution compounding monthly.</div>
+          </div>
+          <div class="how__item">
+            <div class="how__k">Real value</div>
+            <div class="how__v">Adjusts by inflation: FV / (1 + infl)^years.</div>
+          </div>
+          <div class="how__item">
+            <div class="how__k">Range</div>
+            <div class="how__v">Monte Carlo: monthly returns vary around expected average.</div>
+          </div>
+          <div class="how__item">
+            <div class="how__k">GitHub Pages</div>
+            <div class="how__v">Static files only. No server needed.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer__left">FinBoard • Hosted on GitHub Pages</div>
+      <div class="footer__right">
+        <a href="#calc">Calculators</a><span>·</span>
+        <a href="#planner">Planner</a><span>·</span>
+        <a href="#how">How</a>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">
+    <div class="toast__dot"></div>
+    <div class="toast__text" id="toastText">—</div>
+  </div>
+</body>
 </html>
